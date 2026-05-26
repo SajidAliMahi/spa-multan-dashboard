@@ -432,18 +432,16 @@ def main():
         ]
 
     # ── Metric Cards ──────────────────────────────────────────────────────
-    total       = len(df_filt)
-    pending     = (df_filt["Status"] == "Pending").sum()
-    resolved    = (df_filt["Status"] == "Resolved").sum()
-    in_progress = (df_filt["Status"] == "In Progress").sum()
-    unmatched   = df_filt["UC_Code"].isna().sum()
+    total     = len(df_filt)
+    pending   = (df_filt["Status"] == "Pending").sum()
+    resolved  = (df_filt["Status"] == "Resolved").sum()
+    unmatched = df_filt["UC_Code"].isna().sum()
 
-    c1, c2, c3, c4, c5 = st.columns(5)
+    c1, c2, c3, c4 = st.columns(4)
     c1.metric("Total Complaints",  total)
     c2.metric("Pending",           int(pending))
     c3.metric("Resolved",          int(resolved))
-    c4.metric("In Progress",       int(in_progress))
-    c5.metric("Outside UC Bounds", int(unmatched),
+    c4.metric("Outside UC Bounds", int(unmatched),
               delta=None if unmatched == 0 else "⚠️ Check GPS",
               delta_color="off")
 
