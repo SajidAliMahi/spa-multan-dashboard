@@ -42,7 +42,7 @@ STATUS_MARKER_COLOR = {
 # PAGE CONFIG & GLOBAL CSS
 # ─────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="SPA Multan – Complaints Dashboard",
+    page_title="SPA Multan – Special Branch Complaints Dashboard",
     layout="wide",
     page_icon="📋",
     initial_sidebar_state="expanded",
@@ -356,7 +356,7 @@ def main():
     st.markdown(
         """
         <div class="dash-header">
-          <h1>📋  SPA Multan – Complaints Dashboard</h1>
+          <h1>📋  SPA Multan – Special Branch Complaints Dashboard</h1>
           <p>Live data · Google Sheets &nbsp;|&nbsp; UC Boundaries · Multan District GeoJSON &nbsp;|&nbsp; Base Map · OpenStreetMap</p>
         </div>
         """,
