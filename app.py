@@ -449,37 +449,52 @@ def main():
 
     st.divider()
 
-    # ── Map + Table ───────────────────────────────────────────────────────
-    map_col, tbl_col = st.columns([3, 2], gap="medium")
-
-    with map_col:
-        st.markdown('<p class="section-title">🗺️ Complaints Map</p>',
-                    unsafe_allow_html=True)
-        with st.spinner("Rendering map …"):
-            fmap = build_map(df_filt, gdf)
-        st_folium(fmap, width="100%", height=520, returned_objects=[])
-
-    with tbl_col:
-        st.markdown(
-            f'<p class="section-title">📄 Complaints &nbsp;'
-            f'<span style="color:#888;font-size:13px">({total} shown)</span></p>',
-            unsafe_allow_html=True,
-        )
-        display_cols = [
-            "Application Number", "Date", "Issue",
-            "Tehsil", "Status", "UC_Code", "UC_Tehsil",
-        ]
-        avail = [c for c in display_cols if c in df_filt.columns]
-        df_display = df_filt[avail].copy()
-        if "Date" in df_display.columns:
-            df_display["Date"] = df_display["Date"].dt.strftime("%Y-%m-%d")
-        df_display = df_display.rename(columns={
-            "UC_Code":   "UC Code",
-            "UC_Tehsil": "Tehsil (GeoJSON)",
-        })
-        st.dataframe(df_display, use_container_width=True, height=480)
+    # ── Full-width Map ────────────────────────────────────────────────────
+    st.markdown('<p class="section-title">🗺️ Complaints Map</p>',
+                unsafe_allow_html=True)
+    with st.spinner("Rendering map …"):
+        fmap = build_map(df_filt, gdf)
+    st_folium(fmap, width="100%", height=640, returned_objects=[])
 
     st.divider()
+
+    # ── Attribute Table (below map) ───────────────────────────────────────
+    st.markdown(
+        f'<p class="section-title">📄 Complaints Attribute Table &nbsp;'
+        f'<span style="color:#888;font-size:13px">({total} shown)</span></p>',
+        unsafe_allow_html=True,
+    )
+    display_cols = [
+        "Sr No", "Application Number", "Date", "Issue",
+        "Region", "District", "Tehsil", "Address",
+        "Status", "UC_Code", "UC_Tehsil", "UC_No",
+    ]
+    avail = [c for c in display_cols if c in df_filt.columns]
+    df_display = df_filt[avail].copy()
+    if "Date" in df_display.columns:
+        df_display["Date"] = df_display["Date"].dt.strftime("%Y-%m-%d")
+    df_display = df_display.rename(columns={
+        "UC_Code":   "UC Code",
+        "UC_Tehsil": "Tehsil (GeoJSON)",
+        "UC_No":     "UC No",
+    })
+    st.dataframe(df_display, use_container_width=True, height=320)
+
+    st.divider()
+
+    # ── UC-wise Summary Chart ─────────────────────────────────────────────
+    if not df_filt.empty and df_filt["UC_Code"].notna().any():
+        st.markdown('<p class="section-title">📊 Complaints by Tehsil (GeoJSON)</p>',
+                    unsafe_allow_html=True)
+        summary = (
+            df_filt.groupby("UC_Tehsil", dropna=False)
+            .size()
+            .reset_index(name="Count")
+            .sort_values("Count", ascending=False)
+            .rename(columns={"UC_Tehsil": "Tehsil"})
+        )
+        st.bar_chart(summary.set_index("Tehsil")["Count"])
+        st.divider()
 
     # ── Export Section ────────────────────────────────────────────────────
     st.markdown('<p class="section-title">📥 Export to Excel</p>',
@@ -514,20 +529,6 @@ def main():
             type="primary",
             use_container_width=True,
         )
-
-    # ── UC-wise Summary ───────────────────────────────────────────────────
-    if not df_filt.empty and df_filt["UC_Code"].notna().any():
-        st.divider()
-        st.markdown('<p class="section-title">📊 Complaints by Tehsil (GeoJSON)</p>',
-                    unsafe_allow_html=True)
-        summary = (
-            df_filt.groupby("UC_Tehsil", dropna=False)
-            .size()
-            .reset_index(name="Count")
-            .sort_values("Count", ascending=False)
-            .rename(columns={"UC_Tehsil": "Tehsil"})
-        )
-        st.bar_chart(summary.set_index("Tehsil")["Count"])
 
 
 if __name__ == "__main__":
