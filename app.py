@@ -12,6 +12,10 @@ from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 from shapely.geometry import Point
 from streamlit_folium import st_folium
+from streamlit_autorefresh import st_autorefresh
+
+# ── Auto-refresh every 30 s ──────────────────────────────────────────
+st_autorefresh(interval=30000, key="data_refresh")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONSTANTS
