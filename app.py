@@ -100,15 +100,15 @@ st.markdown(
             color: white;
         }
 
-        /* ── metric headings bold + larger ── */
+        /* ── metric label bold, value normal size ── */
         [data-testid="stMetricLabel"] p {
-            font-size: 16px !important;
+            font-size: 15px !important;
             font-weight: 700 !important;
             color: #1a3a2a !important;
         }
         [data-testid="stMetricValue"] {
-            font-size: 42px !important;
-            font-weight: 800 !important;
+            font-size: 28px !important;
+            font-weight: 700 !important;
         }
     </style>
     """,
