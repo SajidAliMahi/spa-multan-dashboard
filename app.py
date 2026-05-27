@@ -119,7 +119,7 @@ st.markdown(
 # ─────────────────────────────────────────────────────────────────────────────
 # DATA LOADERS
 # ─────────────────────────────────────────────────────────────────────────────
-@st.cache_data(ttl=300, show_spinner=False)
+@st.cache_data(ttl=30, show_spinner=False)
 def load_sheet_data() -> pd.DataFrame:
     """Fetch complaints from Google Sheets CSV export."""
     resp = requests.get(SHEET_CSV_URL, timeout=20, allow_redirects=True)
