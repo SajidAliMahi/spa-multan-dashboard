@@ -99,6 +99,17 @@ st.markdown(
             margin: 3px;
             color: white;
         }
+
+        /* ── metric headings bold + larger ── */
+        [data-testid="stMetricLabel"] p {
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            color: #1a3a2a !important;
+        }
+        [data-testid="stMetricValue"] {
+            font-size: 42px !important;
+            font-weight: 800 !important;
+        }
     </style>
     """,
     unsafe_allow_html=True,
@@ -436,16 +447,18 @@ def main():
         ]
 
     # ── Metric Cards ──────────────────────────────────────────────────────
-    total     = len(df_filt)
-    pending   = (df_filt["Status"] == "Pending").sum()
-    resolved  = (df_filt["Status"] == "Resolved").sum()
-    unmatched = df_filt["UC_Code"].isna().sum()
+    total      = len(df_filt)
+    pending    = (df_filt["Status"] == "Pending").sum()
+    resolved   = (df_filt["Status"] == "Resolved").sum()
+    in_process = (df_filt["Status"] == "In Process").sum()
+    unmatched  = df_filt["UC_Code"].isna().sum()
 
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3, c4, c5 = st.columns(5)
     c1.metric("Total Complaints",  total)
     c2.metric("Pending",           int(pending))
     c3.metric("Resolved",          int(resolved))
-    c4.metric("Outside UC Bounds", int(unmatched),
+    c4.metric("In Process",        int(in_process))
+    c5.metric("Outside UC Bounds", int(unmatched),
               delta=None if unmatched == 0 else "⚠️ Check GPS",
               delta_color="off")
 
