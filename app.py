@@ -35,11 +35,31 @@ TEHSIL_PALETTE = {
     "Jalalpur Pir Wala":   "#FF6D00",
 }
 
+def norm_status(raw):
+    """Normalise status string to canonical form."""
+    s = str(raw).strip().lower()
+    if "resolv" in s:
+        return "Resolved"
+    if "pend" in s:
+        return "Pending"
+    if "process" in s or "progress" in s:
+        return "In Process"
+    if "clos" in s:
+        return "Closed"
+    return str(raw).strip()
+
 STATUS_MARKER_COLOR = {
-    "Pending":     "red",
-    "Resolved":    "green",
-    "In Progress": "orange",
-    "Closed":      "gray",
+    "Pending":    "red",
+    "Resolved":   "green",
+    "In Process": "#FFD700",
+    "Closed":     "gray",
+}
+
+STATUS_LABEL_COLOR = {
+    "Pending":    "#E53935",
+    "Resolved":   "#43A047",
+    "In Process": "#D4A800",
+    "Closed":     "#757575",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -126,6 +146,10 @@ def load_sheet_data() -> pd.DataFrame:
     resp.raise_for_status()
     df = pd.read_csv(io.StringIO(resp.text))
     df.columns = df.columns.str.strip()
+
+    # Normalise Status column
+    if "Status" in df.columns:
+        df["Status"] = df["Status"].apply(norm_status)
 
     # Parse GPS → separate Latitude / Longitude columns
     def parse_gps(val):
@@ -221,8 +245,9 @@ def build_map(df_filtered: pd.DataFrame, gdf: gpd.GeoDataFrame) -> folium.Map:
     # ── Complaint Markers ─────────────────────────────────────────────────
     complaints_group = folium.FeatureGroup(name="Complaints", show=True)
     for _, row in df_filtered.iterrows():
-        status     = str(row.get("Status", "Pending"))
+        status     = norm_status(row.get("Status", "Pending"))
         mcolor     = STATUS_MARKER_COLOR.get(status, "red")
+        lcolor     = STATUS_LABEL_COLOR.get(status, "#333333")
         app_no     = row.get("Application Number", "")
         issue      = row.get("Issue", "")
         date_str   = str(row.get("Date", ""))[:10]
@@ -244,10 +269,7 @@ def build_map(df_filtered: pd.DataFrame, gdf: gpd.GeoDataFrame) -> folium.Map:
             <b>Tehsil (Sheet):</b> {tehsil}<br>
             <b>Address:</b> {address}<br>
             <b>Status:</b>
-              <span style="font-weight:700;color:{
-                  {'Pending':'#E53935','Resolved':'#43A047',
-                   'In Progress':'#FFA500','Closed':'#757575'}.get(status,'#333')
-              }">{status}</span><br>
+              <span style="font-weight:700;color:{lcolor}">{status}</span><br>
             <hr style="margin:6px 0">
             <b>UC Code (GeoJSON):</b> {uc_code}<br>
             <b>Tehsil (GeoJSON):</b> {uc_tehsil}<br>
