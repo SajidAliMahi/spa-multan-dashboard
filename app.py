@@ -38,7 +38,7 @@ TEHSIL_PALETTE = {
 STATUS_MARKER_COLOR = {
     "Pending":     "red",
     "Resolved":    "green",
-    "In Progress": "blue",
+    "In Progress": "orange",
     "Closed":      "gray",
 }
 
@@ -246,7 +246,7 @@ def build_map(df_filtered: pd.DataFrame, gdf: gpd.GeoDataFrame) -> folium.Map:
             <b>Status:</b>
               <span style="font-weight:700;color:{
                   {'Pending':'#E53935','Resolved':'#43A047',
-                   'In Progress':'#1E88E5','Closed':'#757575'}.get(status,'#333')
+                   'In Progress':'#FFA500','Closed':'#757575'}.get(status,'#333')
               }">{status}</span><br>
             <hr style="margin:6px 0">
             <b>UC Code (GeoJSON):</b> {uc_code}<br>
