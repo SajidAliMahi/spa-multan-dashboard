@@ -14,8 +14,8 @@ from shapely.geometry import Point
 from streamlit_folium import st_folium
 from streamlit_autorefresh import st_autorefresh
 
-# ── Auto-refresh every 30 s ──────────────────────────────────────────
-st_autorefresh(interval=30000, key="data_refresh")
+# ── Auto-refresh every 2 minutes ─────────────────────────────────────
+st_autorefresh(interval=120000, key="data_refresh")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONSTANTS
@@ -119,7 +119,7 @@ st.markdown(
 # ─────────────────────────────────────────────────────────────────────────────
 # DATA LOADERS
 # ─────────────────────────────────────────────────────────────────────────────
-@st.cache_data(ttl=30, show_spinner=False)
+@st.cache_data(ttl=120, show_spinner=False)
 def load_sheet_data() -> pd.DataFrame:
     """Fetch complaints from Google Sheets CSV export."""
     resp = requests.get(SHEET_CSV_URL, timeout=20, allow_redirects=True)
